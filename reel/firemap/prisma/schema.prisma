@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id        Int          @id @default(autoincrement())
+  is_over    Boolean      @default(false)
+  sensors   SensorsOnEvents[]
+  created_at DateTime     @default(now())
+  vehicles  VehiclesOnEvents[]
+  @@map("events")
+}
+
+model Sensor {
+  id        Int          @id @default(autoincrement())
+  intensity Int
+  longitude Float
+  latitude  Float
+  events    SensorsOnEvents[]
+  created_at DateTime     @default(now())
+  @@map("sensors")
+}
+
+model Vehicle {
+  id            Int          @id @default(autoincrement())
+  is_busy       Boolean      @default(false)
+  longitude     Float
+  latitude      Float
+  created_at    DateTime     @default(now())
+  events        VehiclesOnEvents[]
+  Type          TypeVehicle  @relation(fields: [type_vehicle_id], references: [id])
+  type_vehicle_id Int
+  base          Base         @relation(fields: [base_id], references: [id])
+  base_id       Int
+  @@map("vehicles")
+}
+
+model TypeVehicle {
+  id        Int          @id @default(autoincrement())
+  name     String
+  capacity Int
+  vehicles Vehicle[]
+  @@map("type_vehicles")
+}
+
+model Base {
+  id        Int          @id @default(autoincrement())
+  name     String
+  longitude Float
+  latitude  Float
+  created_at DateTime     @default(now())
+  vehicles Vehicle[]
+  @@map("bases")
+}
+
+model SensorsOnEvents {
+  event    Event    @relation(fields: [event_id], references: [id])
+  event_id  Int      // relation scalar field (used in the `@relation` attribute above)
+  sensor   Sensor   @relation(fields: [sensor_id], references: [id])
+  sensor_id Int      // relation scalar field (used in the `@relation` attribute above)
+  created_at DateTime @default(now())
+  @@map("pivot_events_sensors")
+  @@id([event_id, sensor_id])
+}
+
+model VehiclesOnEvents {
+  id     Int   @id @default(autoincrement())
+  event    Event    @relation(fields: [event_id], references: [id])
+  event_id  Int      
+  vehicle   Vehicle   @relation(fields: [vehicle_id], references: [id])
+  vehicle_id Int    
+  on_site Boolean @default(false)
+  created_at DateTime @default(now())
+  @@map("pivot_events_vehicles")
+  @@index([event_id, vehicle_id])
+}
+

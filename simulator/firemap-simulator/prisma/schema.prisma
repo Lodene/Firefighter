@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id        Int          @id @default(autoincrement())
+  is_over    Boolean      @default(false)
+  sensors   SensorsOnEvents[]
+  created_at DateTime     @default(now())
+  @@map("events")
+}
+
+model Sensor {
+  id        Int          @id @default(autoincrement())
+  intensity Int
+  longitude Float
+  latitude  Float
+  events    SensorsOnEvents[]
+  created_at DateTime     @default(now())
+  @@map("sensors")
+}
+
+model SensorsOnEvents {
+  event    Event    @relation(fields: [event_id], references: [id])
+  event_id  Int      // relation scalar field (used in the `@relation` attribute above)
+  sensor   Sensor   @relation(fields: [sensor_id], references: [id])
+  sensor_id Int      // relation scalar field (used in the `@relation` attribute above)
+  created_at DateTime @default(now())
+  @@map("pivot_events_sensors")
+  @@id([event_id, sensor_id])
+}
+
