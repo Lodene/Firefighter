@@ -1,6 +1,7 @@
 # Projet de Simulation et Réalité pour la Gestion d'Incendies
 ## Résumé du projet
 Ce projet vise à développer un système hybride combinant simulation et opérations réelles pour la gestion des incendies. Le système est divisé en deux grandes parties : le côté "Réel" et le côté "Simulation".
+![alt text](<illustrationReadme.png>)
 
 ### Côté Réel
 Dans la partie réelle, le système attribue des incendies actifs aux véhicules de pompiers pour intervention. Cette section gère également la transmission des coordonnées GPS et des positions des véhicules aux éléments de simulation, afin de reproduire fidèlement les parcours dans l'environnement simulé. Les interactions réelles comprennent la réception de données des capteurs, l'envoi de ces données via une API pour mise à jour dans la base de données, et l'utilisation de ces informations pour diriger les efforts des équipes d'intervention.
